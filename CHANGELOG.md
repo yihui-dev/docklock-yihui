@@ -5,13 +5,6 @@
 
 ## [Unreleased]
 
-### Added
-- 界面支持 10 种语言：English、简体中文、繁體中文、日本語、한국어、Deutsch、Français、Español、Português (Brasil)、Русский；设置 › 通用中可切换语言。
-- 全新设置窗口：系统设置风格的侧边栏、状态卡片、模式卡片、首次授权引导、重新设计的显示器布局图（显示受保护的边缘）与“关于”页；菜单栏菜单加入图标。
-- `docklock://settings?tab=…` 直接打开指定设置页。
-- 完整的英文 / 中文 README 与使用指南（docs/usage.md、docs/usage.zh-CN.md）。
-- CI：检查每种语言的翻译完整性与占位符；为每个设置页、每种语言、浅色 / 深色截图。
-
 ## [1.0.0] - 2026-09-26
 
 首个版本，完整替代 DockLock Lite / Plus。
@@ -23,7 +16,10 @@
 - 按住修饰键临时允许程序坞跳转；暂停锁定；保留触发角。
 - 隐藏程序坞（开会模式），可在屏幕共享 / 录屏或会议应用运行时自动隐藏。
 - `docklock://` URL Scheme（兼容 `DockLockPlus://`）、兼容 DockLock Plus 的命令行、22+ 个快捷指令动作、全局快捷键、Raycast 脚本命令。
-- 简体中文界面。
+- 10 种界面语言（English、简体中文、繁體中文、日本語、한국어、Deutsch、Français、Español、Português (Brasil)、Русский），可在设置中切换。
+- 系统设置风格的设置窗口：状态卡片、模式卡片、首次授权引导、显示器布局图；菜单栏菜单带图标。
+- `docklock://settings?tab=…` 直接打开指定设置页。
+- 英文 / 中文 README 与完整使用指南。
 - 贡献指南、行为准则、安全政策、Issue / PR 模板；CI 覆盖单元测试、翻译完整性、冒烟测试和虚拟第二显示器端到端测试。
 
 [Unreleased]: https://github.com/yihui-dev/docklock-yihui/compare/v1.0.0...HEAD

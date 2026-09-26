@@ -57,6 +57,8 @@
 - 原生设置窗口，带实时显示器布局图，支持浅色和深色模式。
 - **10 种语言**：English、简体中文、繁體中文、日本語、한국어、Deutsch、Français、Español、Português (Brasil)、Русский。可以在设置里选择，也可以跟随系统。
 
+<p align="center"><img src="docs/images/languages.png" width="760" alt="DockLock 的 10 种语言界面"></p>
+
 ## 与 DockLock 对比
 
 | | DockLock Lite | DockLock Plus | DockLock Pro¹ | **本应用** |
@@ -129,7 +131,7 @@ docklock status --json
 | **移动程序坞** | 趁鼠标静止，用 IOKit HID 相对位移（与真实鼠标走同一条路径）在目标显示器边缘“顶”一下，然后确认程序坞的实际位置，并把鼠标放回原处。 |
 | **测试** | CI 在 macOS 上编译应用，并创建一台**虚拟第二显示器**，端到端验证边缘防护、隐藏、自动移动和跟随鼠标。 |
 
-详见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+详见 [docs/ARCHITECTURE.zh-CN.md](docs/ARCHITECTURE.zh-CN.md)。
 
 ## 常见问题
 

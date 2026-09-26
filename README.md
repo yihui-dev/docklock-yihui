@@ -65,6 +65,8 @@ displays works as before. No system files are modified, SIP stays on, and there'
 - **10 languages**: English, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Español, Português (Brasil), Русский.
   Choose one in Settings, or follow the system.
 
+<p align="center"><img src="docs/images/languages.png" width="760" alt="DockLock in 10 languages"></p>
+
 ## Compared with DockLock
 
 | | DockLock Lite | DockLock Plus | DockLock Pro¹ | **This app** |

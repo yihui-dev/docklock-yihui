@@ -27,7 +27,7 @@
 | `App/Sources/Intents/` | 快捷指令 / Siri（App Intents） |
 | `Tests/E2E/` | CI 中用虚拟第二显示器做的端到端测试 |
 
-原理说明见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+原理说明见 [docs/ARCHITECTURE.zh-CN.md](docs/ARCHITECTURE.zh-CN.md)。
 
 ## 翻译 / Translations
 
