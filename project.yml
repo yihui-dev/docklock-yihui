@@ -20,11 +20,8 @@ targets:
     platform: macOS
     sources:
       - path: App/Sources
-        group: DockLock
       - path: App/Resources
-        group: DockLock
       - path: DockLockCore/Sources/DockLockCore
-        group: DockLockCore
     settings:
       base:
         PRODUCT_NAME: DockLock

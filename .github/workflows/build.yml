@@ -67,6 +67,10 @@ jobs:
           test -f "$APP/Contents/Resources/zh-Hans.lproj/Localizable.strings"
           "$BIN" quit
 
+      - name: End-to-end guard test (virtual second display)
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: bash Tests/E2E/run_e2e.sh build/Build/Products/Release/DockLock.app
+
       - name: Package
         id: package
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
