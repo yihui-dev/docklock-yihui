@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Fails when a user-facing string in the app has no Simplified Chinese translation.
+"""Fails when a user-facing string in the app is missing from any translation.
 
 Collects every L("…") / LF("…") key and every App Intents title/description/parameter title,
-and compares them with App/Resources/zh-Hans.lproj/Localizable.strings.
+and checks every App/Resources/<language>.lproj/Localizable.strings: all keys present and the same
+format placeholders as the English text.
 """
 import glob
 import os
@@ -35,19 +36,50 @@ def code_keys():
     return {swift_unescape(k) for k in keys}
 
 
-def translated_keys():
-    text = open(STRINGS, encoding="utf-8").read()
-    return {swift_unescape(k) for k in re.findall(r'^' + LITERAL + r'\s*=', text, flags=re.M)}
+SPECIFIER = re.compile(r"%(?:\d+\$)?l{0,2}[@dufs]")
+
+
+def parse_strings(path):
+    text = open(path, encoding="utf-8").read()
+    pairs = re.findall(r'^' + LITERAL + r'\s*=\s*' + LITERAL + r'\s*;', text, flags=re.M)
+    return {swift_unescape(k): swift_unescape(v) for k, v in pairs}
+
+
+def translated_keys(language="zh-Hans"):
+    return set(parse_strings(os.path.join(ROOT, "App", "Resources", f"{language}.lproj", "Localizable.strings")))
+
+
+def languages():
+    folders = glob.glob(os.path.join(ROOT, "App", "Resources", "*.lproj"))
+    return sorted(os.path.basename(f)[:-6] for f in folders if not f.endswith("en.lproj"))
 
 
 def main():
-    missing = sorted(code_keys() - translated_keys())
-    if missing:
-        print("Missing zh-Hans translations:")
-        for key in missing:
-            print(f'  "{key}"')
+    keys = code_keys()
+    failed = False
+    for language in languages():
+        table = parse_strings(os.path.join(ROOT, "App", "Resources", f"{language}.lproj", "Localizable.strings"))
+        missing = sorted(keys - set(table))
+        stale = sorted(set(table) - keys)
+        wrong = sorted(k for k in keys & set(table)
+                       if sorted(SPECIFIER.findall(k)) != sorted(SPECIFIER.findall(table[k])))
+        if missing:
+            failed = True
+            print(f"[{language}] missing translations:")
+            for key in missing:
+                print(f'  "{key}"')
+        if wrong:
+            failed = True
+            print(f"[{language}] placeholders (%@, %ld, …) differ from the English text:")
+            for key in wrong:
+                print(f'  "{key}"  ->  "{table[key]}"')
+        if stale:
+            print(f"[{language}] warning: {len(stale)} unused entries (safe to delete):")
+            for key in stale:
+                print(f'  "{key}"')
+    if failed:
         return 1
-    print(f"Localization OK ({len(code_keys())} strings).")
+    print(f"Localization OK: {len(keys)} strings in {len(languages())} languages ({', '.join(languages())}).")
     return 0
 
 
