@@ -110,6 +110,12 @@ echo "FOLLOW RESULT: Dock followed the pointer to the virtual display: $FOLLOWED
 "$TOOL" dock
 "$BIN" mode lock-selected
 
+# Leave a typical setup for the screenshots: Dock on the main display, second display guarded.
+"$BIN" allow --display "#2" off
+"$BIN" relocate || true
+sleep 2
+"$BIN" status
+
 "$BIN" quit
 sleep 1
 

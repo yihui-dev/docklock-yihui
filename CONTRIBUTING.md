@@ -29,15 +29,29 @@
 
 原理说明见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
+## 翻译 / Translations
+
+DockLock 目前支持 10 种语言：English、简体中文、繁體中文、日本語、한국어、Deutsch、Français、Español、Português (Brasil)、Русский。
+
+- **改进现有翻译**：直接编辑对应的 `App/Resources/<语言>.lproj/Localizable.strings`。左边的英文是键，不要改；保留 `%@`、`%ld` 等占位符。
+- **新增一种语言**：
+  1. 复制 `App/Resources/zh-Hans.lproj` 为 `App/Resources/<代码>.lproj`（如 `it.lproj`），翻译右边的文字。
+  2. 在 `App/Resources/Info.plist` 的 `CFBundleLocalizations` 和 `App/Sources/Support/AppLanguage.swift` 的 `supported` 中加入该语言。
+  3. 运行 `xcodegen generate` 和 `python3 Scripts/check_localization.py`。
+- 术语请尽量与 Apple 在该语言中的官方叫法一致（如 “Accessibility” 在系统设置里的译名）。CI 会检查每种语言是否缺词、占位符是否一致，并为每种语言截图，方便检查文字是否被截断。
+
+Translations are welcome as pull requests — copy an existing `.lproj`, translate the right-hand side, keep placeholders
+such as `%@` / `%ld`, and run `python3 Scripts/check_localization.py`.
+
 ## 提交前请检查
 
 ```bash
 swift test --package-path DockLockCore        # 核心单元测试（macOS / Linux 均可）
-python3 Scripts/check_localization.py         # 所有界面文字都有中文翻译
+python3 Scripts/check_localization.py         # 所有界面文字在每种语言里都有翻译
 Scripts/build.sh                              # 应用能编译
 ```
 
-- 界面文字写英文，用 `L("…")` / `LF("…", …)` 包起来，并在 `App/Resources/zh-Hans.lproj/Localizable.strings` 中加上中文。
+- 界面文字写英文，用 `L("…")` / `LF("…", …)` 包起来，并在每个 `App/Resources/<语言>.lproj/Localizable.strings` 中加上翻译（按键名排序）。
 - 代码风格跟随周围代码：4 空格缩进，优先 `let`，注释解释“为什么”。
 - 一个 PR 只做一件事；用户可见的变化请在 `CHANGELOG.md` 的 “Unreleased” 下记一笔。
 - 不引入网络访问、统计或第三方依赖。

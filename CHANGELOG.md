@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+### Added
+- 界面支持 10 种语言：English、简体中文、繁體中文、日本語、한국어、Deutsch、Français、Español、Português (Brasil)、Русский；设置 › 通用中可切换语言。
+- 全新设置窗口：系统设置风格的侧边栏、状态卡片、模式卡片、首次授权引导、重新设计的显示器布局图（显示受保护的边缘）与“关于”页；菜单栏菜单加入图标。
+- `docklock://settings?tab=…` 直接打开指定设置页。
+- 完整的英文 / 中文 README 与使用指南（docs/usage.md、docs/usage.zh-CN.md）。
+- CI：检查每种语言的翻译完整性与占位符；为每个设置页、每种语言、浅色 / 深色截图。
+
 ## [1.0.0] - 2026-09-26
 
 首个版本，完整替代 DockLock Lite / Plus。
