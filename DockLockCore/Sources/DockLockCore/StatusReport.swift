@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 public struct DisplayReport: Codable, Equatable, Sendable {
     public var name: String

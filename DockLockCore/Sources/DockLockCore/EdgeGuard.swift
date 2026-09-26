@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// A strip along the Dock edge of one display that the pointer is kept out of.
 ///

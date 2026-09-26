@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// The screen edge the Dock is attached to ("Position on screen" in System Settings).
 public enum DockEdge: String, Codable, CaseIterable, Sendable {

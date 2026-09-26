@@ -21,6 +21,8 @@ jobs:
         run: swift test --package-path DockLockCore
 
       - name: Build DockLock.app
+        id: build
+        if: ${{ !cancelled() }}
         run: |
           set -o pipefail
           if ! xcodebuild -project DockLock.xcodeproj -scheme DockLock -configuration Release \
@@ -38,6 +40,7 @@ jobs:
           ls -la build/Build/Products/Release/DockLock.app/Contents/MacOS
 
       - name: Smoke test (CLI + running app)
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
           APP=build/Build/Products/Release/DockLock.app
           BIN="$APP/Contents/MacOS/DockLock"
@@ -65,6 +68,8 @@ jobs:
           "$BIN" quit
 
       - name: Package
+        id: package
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
           APP=build/Build/Products/Release/DockLock.app
           mkdir -p dist
@@ -74,12 +79,13 @@ jobs:
           ls -la dist
 
       - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && steps.package.outcome == 'success' }}
         with:
           name: DockLock
           path: dist/*
 
       - name: Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && steps.package.outcome == 'success' }}
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*

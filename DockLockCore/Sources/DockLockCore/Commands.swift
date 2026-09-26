@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// How a command refers to a display.
 public enum DisplayTarget: Codable, Equatable, Sendable {

@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// How DockLock decides where the Dock should be.
 public enum DockMode: String, Codable, CaseIterable, Sendable {

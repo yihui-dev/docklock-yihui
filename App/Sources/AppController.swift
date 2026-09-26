@@ -104,6 +104,7 @@ final class AppController: ObservableObject {
     func start() {
         guard !started else { return }
         started = true
+        let firstRun = settings.arrangements.isEmpty
 
         applyActivationPolicy()
         statusMenu = StatusMenuController(controller: self)
@@ -136,7 +137,7 @@ final class AppController: ObservableObject {
         queuedURLs.removeAll()
         urls.forEach(handle(url:))
 
-        if !accessibilityGranted || settings.arrangements.isEmpty {
+        if !accessibilityGranted || firstRun {
             showSettings()
         }
     }

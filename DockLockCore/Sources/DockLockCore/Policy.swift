@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// Runtime state that is not persisted but changes what DockLock does.
 public struct RuntimeState: Equatable, Sendable {
