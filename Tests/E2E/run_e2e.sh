@@ -92,6 +92,19 @@ echo "E2E guard checks passed"
 "$BIN" move main && echo "MOVE BACK RESULT: ok" || echo "MOVE BACK RESULT: not accepted"
 "$BIN" status
 
+# Informational: "Dock follows mouse" between two allowed displays.
+"$BIN" allow --display "#2" on
+"$BIN" mode follows-mouse
+"$TOOL" post "$((VX + VW / 2))" "$((VY + VH / 2))" >/dev/null
+FOLLOWED=no
+for i in $(seq 1 20); do
+  [ "$("$BIN" display)" = "DockLock E2E Display" ] && { FOLLOWED=yes; break; }
+  sleep 1
+done
+echo "FOLLOW RESULT: Dock followed the pointer to the virtual display: $FOLLOWED"
+"$TOOL" dock
+"$BIN" mode lock-selected
+
 "$BIN" quit
 kill $VPID 2>/dev/null
 exit 0

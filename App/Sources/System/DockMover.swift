@@ -9,11 +9,12 @@ import CoreGraphics
 /// is *verified* by reading where the Dock actually is. The strategy that worked is remembered and
 /// tried first next time. The pointer is always put back where it was.
 final class DockMover {
+    /// Tried in this order unless another one worked last time.
     enum Strategy: String, CaseIterable {
+        /// Relative pointer motion posted through the IOKit HID system. Verified on macOS 15.
+        case hidRelativePush = "hid-relative-push"
         /// Mouse-moved events at and beyond the edge, posted at the HID level.
         case syntheticPush = "synthetic-push"
-        /// Relative pointer motion posted through the IOKit HID system.
-        case hidRelativePush = "hid-relative-push"
     }
 
     struct Outcome {
