@@ -1,0 +1,18 @@
+name: 功能建议 / Feature request
+description: 希望 DockLock 支持的新功能
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解决什么问题 / Problem
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: 你的想法 / Proposed solution
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 其他方案 / Alternatives considered

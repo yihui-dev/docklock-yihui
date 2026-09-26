@@ -236,3 +236,5 @@
 "Move Dock to Home Display" = "把程序坞移到默认显示器";
 "Built-in Display" = "内建显示器";
 "Display %u" = "显示器 %u";
+"Push the pointer against the left edge of this screen to bring the Dock to %@." = "把鼠标推到这块屏幕的左边缘，即可把程序坞移到 %@。";
+"Push the pointer against the right edge of this screen to bring the Dock to %@." = "把鼠标推到这块屏幕的右边缘，即可把程序坞移到 %@。";

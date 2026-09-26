@@ -2,15 +2,41 @@ name: Build
 
 on:
   push:
+    branches: ["**"]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Weekly, to catch breakage from new Xcode / macOS runner images.
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  core-linux:
+    name: Core tests (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Unit tests
+        run: swift test --package-path DockLockCore
+      - name: Localization check
+        run: python3 Scripts/check_localization.py
+
   build:
+    name: Build & test (macOS)
     runs-on: macos-15
     timeout-minutes: 30
+    permissions:
+      contents: write # publish releases for v* tags
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Toolchain
         run: |
@@ -62,12 +88,11 @@ jobs:
           "$BIN" enable
           "$BIN" status --json | head -20
           defaults read dev.yihui.docklock settings.v1 >/dev/null
-          plutil -p "$APP/Contents/Info.plist" | grep -E "CFBundleURLSchemes|docklock" || true
-          test -d "$APP/Contents/Resources/Metadata.appintents" && echo "App Intents metadata present" || echo "::warning::No App Intents metadata"
+          test -d "$APP/Contents/Resources/Metadata.appintents"
           test -f "$APP/Contents/Resources/zh-Hans.lproj/Localizable.strings"
           "$BIN" quit
 
-      - name: End-to-end guard test (virtual second display)
+      - name: End-to-end test (virtual second display)
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: bash Tests/E2E/run_e2e.sh build/Build/Products/Release/DockLock.app
 
@@ -80,9 +105,10 @@ jobs:
           ditto -c -k --keepParent "$APP" dist/DockLock.zip
           mkdir -p dmg && cp -R "$APP" dmg/ && ln -s /Applications dmg/Applications
           hdiutil create -volname DockLock -srcfolder dmg -ov -format UDZO dist/DockLock.dmg
+          (cd dist && shasum -a 256 DockLock.zip DockLock.dmg > SHA256SUMS.txt)
           ls -la dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() && steps.package.outcome == 'success' }}
         with:
           name: DockLock
@@ -90,6 +116,7 @@ jobs:
 
       - name: Release
         if: ${{ startsWith(github.ref, 'refs/tags/v') && steps.package.outcome == 'success' }}
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/*
+          generate_release_notes: true

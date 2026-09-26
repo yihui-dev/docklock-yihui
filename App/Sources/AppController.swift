@@ -650,9 +650,13 @@ final class AppController: ObservableObject {
         lastRelocation = RelocationRecord(date: Date(), displayName: displayName(target), success: false, detail: detail)
         finishJobs(jobs, ok: false, message: LF("Could not move the Dock to %@: %@", displayName(target), detail))
         if settings.showRelocationGuide {
-            guide.show(on: target, edge: dockEdge,
-                       message: LF("Push the pointer against the bottom of this screen to bring the Dock to %@.",
-                                   displayName(target)))
+            let format: String
+            switch dockEdge {
+            case .bottom: format = "Push the pointer against the bottom of this screen to bring the Dock to %@."
+            case .left: format = "Push the pointer against the left edge of this screen to bring the Dock to %@."
+            case .right: format = "Push the pointer against the right edge of this screen to bring the Dock to %@."
+            }
+            guide.show(on: target, edge: dockEdge, message: LF(format, displayName(target)))
         }
         if settings.notifyOnRelocationFailure {
             Notifier.post(title: L("DockLock could not move the Dock"),

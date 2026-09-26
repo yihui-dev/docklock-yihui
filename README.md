@@ -5,6 +5,13 @@
 <p align="center">把 macOS 程序坞（Dock）锁定在你指定的显示器上 —— 开源、免费的 DockLock Pro / Plus / Lite 替代品。<br>
 Keep the macOS Dock on the displays you choose — an open-source replacement for DockLock Pro / Plus / Lite.</p>
 
+<p align="center">
+  <a href="https://github.com/yihui-dev/docklock-yihui/actions/workflows/build.yml"><img src="https://github.com/yihui-dev/docklock-yihui/actions/workflows/build.yml/badge.svg" alt="Build"></a>
+  <a href="https://github.com/yihui-dev/docklock-yihui/releases"><img src="https://img.shields.io/github/v/release/yihui-dev/docklock-yihui?include_prereleases" alt="Release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/macOS-13%2B-black?logo=apple" alt="macOS 13+">
+</p>
+
 ---
 
 ## 解决什么问题
@@ -41,7 +48,7 @@ DockLock 的做法与 DockLock Lite/Plus 相同，**不修改系统文件、不�
 ## 安装
 
 ### 方式一：下载编译好的版本
-在 GitHub 仓库的 **Actions → Build** 里下载最新构建的 `DockLock.zip` / `DockLock.dmg`（打 `v*` 标签时会自动发布到 Releases）。
+从 [Releases](https://github.com/yihui-dev/docklock-yihui/releases) 下载 `DockLock.dmg` 或 `DockLock.zip`（附 `SHA256SUMS.txt` 校验和）；最新的开发版构建在 **Actions → Build** 的产物里。
 应用是 ad-hoc 签名的，第一次打开请在 Finder 里**右键 → 打开**，或执行：
 
 ```bash
@@ -157,6 +164,7 @@ Scripts/                编译、安装 CLI、生成图标
 
 ```bash
 swift test --package-path DockLockCore   # 核心逻辑单元测试（macOS / Linux 均可）
+python3 Scripts/check_localization.py    # 检查所有界面文字都有中文翻译
 ```
 
 GitHub Actions 会在 macOS 上运行单元测试、编译应用、做冒烟测试（启动应用并通过 CLI 操作），再用 `Tests/E2E` 创建一台**虚拟第二显示器**做端到端测试（鼠标被挡在受保护显示器的底边之外、允许的显示器不受影响、隐藏模式、自动移动程序坞、跟随鼠标），最后打包 zip/dmg。
@@ -179,6 +187,13 @@ commands — plus built-in global hot keys, pausing and hot-corner support. Requ
 Build with Xcode (`open DockLock.xcodeproj`) or `Scripts/build.sh --install`, grant Accessibility access, and pick
 the allowed displays from the menu bar icon.
 
+## 参与贡献
+
+欢迎 Issue 和 PR！请先阅读 [贡献指南](CONTRIBUTING.md) 和 [行为准则](CODE_OF_CONDUCT.md)；原理说明见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)，
+版本变化见 [CHANGELOG.md](CHANGELOG.md)，安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。
+
+DockLock 是独立的开源实现，与 DockLock Lite / Plus / Pro 的开发者没有关联。
+
 ## License
 
-MIT
+[MIT](LICENSE)

@@ -1,0 +1,46 @@
+name: 问题报告 / Bug report
+description: 程序坞仍然乱跳、无法移动、崩溃等问题
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么 / What happened
+      description: 以及你期望发生什么
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤 / Steps to reproduce
+      placeholder: |
+        1. 只允许程序坞出现在“Studio Display”
+        2. 把鼠标移到内建显示器底部
+        3. 程序坞跳到了内建显示器
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS 版本 / macOS version
+      placeholder: macOS 15.7 (24G830)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: DockLock 版本 / DockLock version
+      placeholder: "1.0.0（菜单栏 › 关于 DockLock）"
+    validations:
+      required: true
+  - type: textarea
+    id: displays
+    attributes:
+      label: 显示器 / Displays
+      description: 数量、型号、排列方式（左右 / 上下），是否用扩展坞、DisplayLink、Sidecar
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: 诊断信息 / Diagnostics
+      description: 设置 › 高级 › “拷贝诊断信息”，粘贴到这里
+      render: text
