@@ -5,13 +5,6 @@
 
 ## [Unreleased]
 
-### Changed
-- 无法自动移动程序坞时的屏幕提示会根据程序坞位置（底部 / 左侧 / 右侧）给出正确的方向。
-
-### Added
-- 开源项目维护文件：贡献指南、行为准则、安全政策、Issue / PR 模板、Dependabot。
-- CI 检查所有界面文字都有中文翻译；每周定时构建，及时发现新 Xcode / macOS 带来的问题。
-
 ## [1.0.0] - 2026-09-26
 
 首个版本，完整替代 DockLock Lite / Plus。
@@ -24,6 +17,7 @@
 - 隐藏程序坞（开会模式），可在屏幕共享 / 录屏或会议应用运行时自动隐藏。
 - `docklock://` URL Scheme（兼容 `DockLockPlus://`）、兼容 DockLock Plus 的命令行、22+ 个快捷指令动作、全局快捷键、Raycast 脚本命令。
 - 简体中文界面。
+- 贡献指南、行为准则、安全政策、Issue / PR 模板；CI 覆盖单元测试、翻译完整性、冒烟测试和虚拟第二显示器端到端测试。
 
 [Unreleased]: https://github.com/yihui-dev/docklock-yihui/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/yihui-dev/docklock-yihui/releases/tag/v1.0.0
