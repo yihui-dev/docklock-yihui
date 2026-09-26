@@ -96,6 +96,13 @@ jobs:
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: bash Tests/E2E/run_e2e.sh build/Build/Products/Release/DockLock.app
 
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        with:
+          name: screenshots
+          path: screenshots/*.png
+          if-no-files-found: ignore
+
       - name: Package
         id: package
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}

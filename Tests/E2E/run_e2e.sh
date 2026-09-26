@@ -26,6 +26,11 @@ for service in kTCCServiceAccessibility kTCCServicePostEvent; do
   done
 done
 
+# Screen recording for screencapture (settings screenshots).
+for client in /usr/sbin/screencapture /bin/bash; do
+  sudo sqlite3 "$TCC" "INSERT OR REPLACE INTO access (service, client, client_type, auth_value, auth_reason, auth_version, csreq, policy_id, indirect_object_identifier_type, indirect_object_identifier, indirect_object_code_identity, flags, last_modified) VALUES ('kTCCServiceScreenCapture', '$client', 1, 2, 4, 1, NULL, NULL, 0, 'UNUSED', NULL, 0, $NOW);" || true
+done
+
 # Second display.
 "$TOOL" vdisplay > vdisplay.log 2>&1 &
 VPID=$!
@@ -106,5 +111,10 @@ echo "FOLLOW RESULT: Dock followed the pointer to the virtual display: $FOLLOWED
 "$BIN" mode lock-selected
 
 "$BIN" quit
+sleep 1
+
+# Screenshots of every settings page with two displays connected (uploaded as a CI artifact).
+bash "$HERE/screenshots.sh" "$APP" "$TOOL" en zh-Hans || echo "::warning::screenshots failed"
+
 kill $VPID 2>/dev/null
 exit 0

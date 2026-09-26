@@ -825,6 +825,11 @@ final class AppController: ObservableObject {
             return
         }
         switch URLCommandParser.parse(url) {
+        case .success(.showSettings):
+            // docklock://settings?tab=displays opens a specific page.
+            let tab = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+                .queryItems?.first(where: { $0.name == "tab" })?.value
+            showSettings(tab: tab.flatMap(SettingsTab.init(rawValue:)))
         case .success(let command):
             _ = execute(command)
         case .failure(let error):

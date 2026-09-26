@@ -140,6 +140,20 @@ int main(int argc, const char *argv[]) {
             printf("%.1f %.1f\n", p.x, p.y);
             return 0;
         }
+        if ([cmd isEqualToString:@"windows"] && argc >= 3) {
+            // Window numbers of on-screen windows owned by a process name (largest first).
+            NSArray *list = CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID));
+            NSMutableArray *matches = [NSMutableArray array];
+            for (NSDictionary *w in list) {
+                if (![w[(id)kCGWindowOwnerName] isEqualToString:@(argv[2])]) continue;
+                if ([w[(id)kCGWindowLayer] intValue] != 0) continue;
+                CGRect b; CGRectMakeWithDictionaryRepresentation((CFDictionaryRef)w[(id)kCGWindowBounds], &b);
+                [matches addObject:@[w[(id)kCGWindowNumber], @(b.size.width * b.size.height)]];
+            }
+            [matches sortUsingComparator:^NSComparisonResult(NSArray *a, NSArray *b) { return [b[1] compare:a[1]]; }];
+            for (NSArray *m in matches) printf("%d\n", [m[0] intValue]);
+            return 0;
+        }
         if ([cmd isEqualToString:@"dock"]) {
             typedef void (*GetRect)(CGRect *);
             GetRect getRect = (GetRect)dlsym(RTLD_DEFAULT, "CoreDockGetRect");
