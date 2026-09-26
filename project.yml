@@ -1,0 +1,51 @@
+# XcodeGen spec — `xcodegen generate` recreates DockLock.xcodeproj from this file.
+name: DockLock
+options:
+  bundleIdPrefix: dev.yihui
+  deploymentTarget:
+    macOS: "13.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+  groupSortPosition: top
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    DEAD_CODE_STRIPPING: YES
+targets:
+  DockLock:
+    type: application
+    platform: macOS
+    sources:
+      - path: App/Sources
+        group: DockLock
+      - path: App/Resources
+        group: DockLock
+      - path: DockLockCore/Sources/DockLockCore
+        group: DockLockCore
+    settings:
+      base:
+        PRODUCT_NAME: DockLock
+        PRODUCT_BUNDLE_IDENTIFIER: dev.yihui.docklock
+        INFOPLIST_FILE: App/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/Resources/DockLock.entitlements
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        DEVELOPMENT_TEAM: ""
+        ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        COMBINE_HIDPI_IMAGES: YES
+        GENERATE_INFOPLIST_FILE: NO
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+        SWIFT_EMIT_LOC_STRINGS: NO
+schemes:
+  DockLock:
+    build:
+      targets:
+        DockLock: all
+    run:
+      config: Debug
+    archive:
+      config: Release

@@ -1,0 +1,85 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Core unit tests
+        run: swift test --package-path DockLockCore
+
+      - name: Build DockLock.app
+        run: |
+          set -o pipefail
+          if ! xcodebuild -project DockLock.xcodeproj -scheme DockLock -configuration Release \
+                -derivedDataPath build -destination 'generic/platform=macOS' \
+                CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO build > build.log 2>&1; then
+            echo "::group::Errors"
+            grep -E "error:|fatal" build.log | sort -u | head -150 || true
+            echo "::endgroup::"
+            tail -60 build.log
+            exit 1
+          fi
+          echo "::group::Warnings"
+          grep -E "warning:" build.log | grep -v "appintentsmetadataprocessor" | sort -u | head -150 || true
+          echo "::endgroup::"
+          ls -la build/Build/Products/Release/DockLock.app/Contents/MacOS
+
+      - name: Smoke test (CLI + running app)
+        run: |
+          APP=build/Build/Products/Release/DockLock.app
+          BIN="$APP/Contents/MacOS/DockLock"
+          "$BIN" --version
+          "$BIN" help | head -5
+          set +e
+          "$BIN" status; code=$?
+          set -e
+          test "$code" -eq 3   # not running yet
+          open -g "$APP"
+          for i in $(seq 1 30); do "$BIN" mode >/dev/null 2>&1 && break; sleep 1; done
+          "$BIN" status
+          "$BIN" displays
+          "$BIN" mode follows-mouse
+          test "$("$BIN" mode)" = "follows-mouse"
+          "$BIN" mode lock-selected
+          "$BIN" url "docklock://disableDockLock"
+          test "$("$BIN" mode)" = "disabled"
+          "$BIN" enable
+          "$BIN" status --json | head -20
+          defaults read dev.yihui.docklock settings.v1 >/dev/null
+          plutil -p "$APP/Contents/Info.plist" | grep -E "CFBundleURLSchemes|docklock" || true
+          test -d "$APP/Contents/Resources/Metadata.appintents" && echo "App Intents metadata present" || echo "::warning::No App Intents metadata"
+          test -f "$APP/Contents/Resources/zh-Hans.lproj/Localizable.strings"
+          "$BIN" quit
+
+      - name: Package
+        run: |
+          APP=build/Build/Products/Release/DockLock.app
+          mkdir -p dist
+          ditto -c -k --keepParent "$APP" dist/DockLock.zip
+          mkdir -p dmg && cp -R "$APP" dmg/ && ln -s /Applications dmg/Applications
+          hdiutil create -volname DockLock -srcfolder dmg -ov -format UDZO dist/DockLock.dmg
+          ls -la dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DockLock
+          path: dist/*
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
