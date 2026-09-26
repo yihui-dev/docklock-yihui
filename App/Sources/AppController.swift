@@ -107,6 +107,12 @@ final class AppController: ObservableObject {
         let firstRun = settings.arrangements.isEmpty
 
         applyActivationPolicy()
+        // `-DockLockAppearance dark|light` (used for screenshots) forces an appearance.
+        switch UserDefaults.standard.string(forKey: "DockLockAppearance") {
+        case "dark": NSApp.appearance = NSAppearance(named: .darkAqua)
+        case "light": NSApp.appearance = NSAppearance(named: .aqua)
+        default: break
+        }
         statusMenu = StatusMenuController(controller: self)
         statusMenu?.setVisible(settings.showMenuBarIcon)
 

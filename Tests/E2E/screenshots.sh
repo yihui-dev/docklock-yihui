@@ -10,7 +10,7 @@ for lang in "${LANGS[@]}"; do
   for style in Light Dark; do
     "$BIN" quit >/dev/null 2>&1; sleep 1
     args=(-AppleLanguages "($lang)")
-    [ "$style" = Dark ] && args+=(-AppleInterfaceStyle Dark)
+    [ "$style" = Dark ] && args+=(-DockLockAppearance dark) || args+=(-DockLockAppearance light)
     open -g "$APP" --args "${args[@]}"
     for i in $(seq 1 30); do "$BIN" mode >/dev/null 2>&1 && break; sleep 1; done
     for tab in general displays automation hideDock advanced about; do

@@ -21,9 +21,13 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         let hosting = NSHostingController(rootView: root)
         let window = NSWindow(contentViewController: hosting)
         window.title = L("DockLock Settings")
-        window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-        window.setContentSize(NSSize(width: 720, height: 600))
-        window.minSize = NSSize(width: 640, height: 480)
+        window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+        window.isMovableByWindowBackground = true
+        window.setContentSize(NSSize(width: 860, height: 640))
+        window.minSize = NSSize(width: 760, height: 540)
+        window.setFrameAutosaveName("DockLockSettings")
         window.isReleasedWhenClosed = false
         window.center()
         super.init(window: window)

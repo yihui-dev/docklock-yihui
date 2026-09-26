@@ -58,6 +58,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         let c = controller
         let summary = NSMenuItem(title: c.statusSummary, action: nil, keyEquivalent: "")
         summary.isEnabled = false
+        summary.attributedTitle = NSAttributedString(string: c.statusSummary, attributes: [
+            .font: NSFont.systemFont(ofSize: NSFont.systemFontSize, weight: .semibold),
+            .foregroundColor: NSColor.labelColor,
+        ])
         menu.addItem(summary)
 
         if !c.accessibilityGranted {
@@ -69,14 +73,15 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         }
         menu.addItem(.separator())
 
-        let enabled = item(L("Enable Dock Locking"), #selector(toggleEnabled), key: "l")
+        let enabled = item(L("Enable Dock Locking"), #selector(toggleEnabled), key: "l", image: "lock.fill")
         enabled.state = c.settings.isEnabled ? .on : .off
         menu.addItem(enabled)
 
         let modeItem = NSMenuItem(title: L("Mode"), action: nil, keyEquivalent: "")
+        modeItem.image = NSImage(systemSymbolName: "square.grid.2x2", accessibilityDescription: nil)
         let modeMenu = NSMenu()
         for mode in DockMode.allCases {
-            let entry = item(Self.title(for: mode), #selector(selectMode(_:)))
+            let entry = item(Self.title(for: mode), #selector(selectMode(_:)), image: Self.symbol(for: mode))
             entry.representedObject = mode.rawValue
             entry.state = c.settings.mode == mode ? .on : .off
             modeMenu.addItem(entry)
@@ -94,7 +99,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             if display.uuid == c.dockDisplayUUID { tags.append(L("Dock")) }
             if display.isMain { tags.append(L("Main")) }
             if !tags.isEmpty { title += "  (" + tags.joined(separator: ", ") + ")" }
-            let entry = item(title, #selector(toggleAllowed(_:)))
+            let entry = item(title, #selector(toggleAllowed(_:)), image: display.isBuiltin ? "laptopcomputer" : "display")
             entry.representedObject = display.uuid
             entry.state = c.isAllowed(display) ? .on : .off
             entry.indentationLevel = 1
@@ -102,40 +107,44 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         }
 
         let moveItem = NSMenuItem(title: L("Move Dock To"), action: nil, keyEquivalent: "")
+        moveItem.image = NSImage(systemSymbolName: "dock.arrow.up.rectangle", accessibilityDescription: nil)
         let moveMenu = NSMenu()
         for display in c.layout.displays {
-            let entry = item(c.displayName(display), #selector(moveToDisplay(_:)))
+            let entry = item(c.displayName(display), #selector(moveToDisplay(_:)), image: display.isBuiltin ? "laptopcomputer" : "display")
             entry.representedObject = display.uuid
             entry.state = display.uuid == c.dockDisplayUUID ? .on : .off
             moveMenu.addItem(entry)
         }
         moveMenu.addItem(.separator())
-        let directions: [(Direction, String)] = [(.left, L("Display on the Left")), (.right, L("Display on the Right")),
-                                                 (.up, L("Display Above")), (.down, L("Display Below"))]
-        for (direction, title) in directions {
-            let entry = item(title, #selector(moveDirection(_:)))
+        let directions: [(Direction, String, String)] = [(.left, L("Display on the Left"), "arrow.left"),
+                                                         (.right, L("Display on the Right"), "arrow.right"),
+                                                         (.up, L("Display Above"), "arrow.up"),
+                                                         (.down, L("Display Below"), "arrow.down")]
+        for (direction, title, symbol) in directions {
+            let entry = item(title, #selector(moveDirection(_:)), image: symbol)
             entry.representedObject = direction.rawValue
             entry.isEnabled = c.dockDisplay.flatMap { c.layout.adjacent(to: $0, direction: direction) } != nil
             moveMenu.addItem(entry)
         }
-        moveMenu.addItem(item(L("Display with the Pointer"), #selector(moveToPointer)))
-        moveMenu.addItem(item(L("Home Display"), #selector(moveHome)))
+        moveMenu.addItem(item(L("Display with the Pointer"), #selector(moveToPointer), image: "cursorarrow"))
+        moveMenu.addItem(item(L("Home Display"), #selector(moveHome), image: "house"))
         moveItem.submenu = moveMenu
         moveItem.isEnabled = c.layout.count > 1
         menu.addItem(moveItem)
 
         if let exclusive = c.runtime.exclusiveTarget, let display = c.layout.display(uuid: exclusive) {
-            menu.addItem(item(LF("Release Dock from %@", c.displayName(display)), #selector(releasePlacement)))
+            menu.addItem(item(LF("Release Dock from %@", c.displayName(display)), #selector(releasePlacement), image: "pin.slash"))
         }
         menu.addItem(.separator())
 
-        let hide = item(L("Hide Dock on All Displays"), #selector(toggleHide))
+        let hide = item(L("Hide Dock on All Displays"), #selector(toggleHide), image: "eye.slash")
         hide.state = c.manualHide ? .on : .off
         menu.addItem(hide)
 
         let pauseItem = NSMenuItem(title: c.isPaused ? L("Resume Locking") : L("Pause Locking"),
                                    action: c.isPaused ? #selector(resume) : nil, keyEquivalent: "")
         pauseItem.target = self
+        pauseItem.image = NSImage(systemSymbolName: c.isPaused ? "play.circle" : "pause.circle", accessibilityDescription: nil)
         if !c.isPaused {
             let pauseMenu = NSMenu()
             let durations: [(Double, String)] = [(5, L("For 5 Minutes")), (15, L("For 15 Minutes")), (60, L("For 1 Hour"))]
@@ -151,11 +160,20 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(pauseItem)
         menu.addItem(.separator())
 
-        menu.addItem(item(L("Settings…"), #selector(openSettings), key: ","))
-        menu.addItem(item(L("Restart Dock"), #selector(restartDock)))
-        menu.addItem(item(L("About DockLock"), #selector(openAbout)))
+        menu.addItem(item(L("Settings…"), #selector(openSettings), key: ",", image: "gearshape"))
+        menu.addItem(item(L("Restart Dock"), #selector(restartDock), image: "arrow.clockwise"))
+        menu.addItem(item(L("About DockLock"), #selector(openAbout), image: "info.circle"))
         menu.addItem(.separator())
-        menu.addItem(item(L("Quit DockLock"), #selector(quit), key: "q"))
+        menu.addItem(item(L("Quit DockLock"), #selector(quit), key: "q", image: "power"))
+    }
+
+    static func symbol(for mode: DockMode) -> String {
+        switch mode {
+        case .lock: return "lock"
+        case .followsMouse: return "cursorarrow.motionlines"
+        case .followsWindow: return "macwindow"
+        case .followsApps: return "app.badge"
+        }
     }
 
     static func title(for mode: DockMode) -> String {
